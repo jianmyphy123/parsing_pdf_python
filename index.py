@@ -41,7 +41,7 @@ titleArr = ['Positionskennzahlen', 'PORTFOLIO CHARACTERISTICS']
 
 
 files = [join(mypath, f) for f in listdir(mypath) if isfile(join(mypath, f))]
-
+csv = open('output/csvfile.csv', 'w')
 for filename in files:
 
     text = convert(filename)
@@ -107,5 +107,5 @@ for filename in files:
         df = pd.DataFrame(data=np.array(tableData).transpose())
         print(df)
 
-        with open('output/csvfile.csv', 'a') as csv:
-            df.to_csv(csv, sep=',', index=False, header=False)
+
+        df.to_csv(csv, sep=',', index=False, header=False)
