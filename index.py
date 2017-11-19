@@ -8,6 +8,7 @@ from pdfminer.pdfpage import PDFPage
 import pandas as pd
 import numpy as np
 import re, copy
+import ntpath
 
 from os import listdir
 from os.path import isfile, join
@@ -42,6 +43,10 @@ titleArr = ['Positionskennzahlen', 'PORTFOLIO CHARACTERISTICS']
 
 files = [join(mypath, f) for f in listdir(mypath) if isfile(join(mypath, f))]
 csv = open('output/csvfile.csv', 'w')
+
+df = pd.DataFrame(data=np.array([['File Name'], ['Title'], ['Status'], ['Field']]).transpose())
+df.to_csv(csv, sep=',', index=False, header=False)
+
 for filename in files:
 
     text = convert(filename)
@@ -62,6 +67,9 @@ for filename in files:
         titleIndex = np.asarray(np.where(arr==title))
         if titleIndex.size == 0:
             print('Title not found in '+filename+': ', title)
+
+            df = pd.DataFrame(data=np.array([[ntpath.basename(filename)], [title], ['Title not found']]).transpose())
+            df.to_csv(csv, sep=',', index=False, header=False)
             continue
         titleIndex = int(titleIndex[0])
 
@@ -103,7 +111,8 @@ for filename in files:
         for i in range(0, len(tableDataIndexArr), 2):
             tableData.append(textArr[tableDataIndexArr[i]:tableDataIndexArr[i+1]])
 
-
+        tableData = [np.full((diffVal), ntpath.basename(filename))] + [np.full((diffVal), title)] + [np.full((diffVal), 'OK')] + tableData
+        
         df = pd.DataFrame(data=np.array(tableData).transpose())
         print(df)
 
